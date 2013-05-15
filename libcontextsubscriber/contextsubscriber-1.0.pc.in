@@ -1,0 +1,13 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+Name: contextsubscriber
+Description: ContextKit Context Subscriber library
+Version: @PKG_VERSION@
+Requires: QtCore
+Requires.private: QtDBus QtXml
+Libs: -L${libdir} -lcontextsubscriber
+Libs.private: @CDB_LIBS@
+Cflags: -I${includedir}/contextsubscriber
