@@ -51,6 +51,7 @@
 #include <QDebug>
 #include <QDBusConnection>
 #include <QDBusPendingReply>
+#include <QMetaMethod>
 
 namespace ContextSubscriber {
 
@@ -155,22 +156,25 @@ void SubscriberInterface::onSubscribeFinished(QDBusPendingCallWatcher* watcher)
     }
 }
 
-void SubscriberInterface::connectNotify(const char *signal)
+void SubscriberInterface::connectNotify(const QMetaMethod *signal)
 {
     // only Changed signal should be AddMatch'd on the DBus side
-    if (qstrcmp(signal, SIGNAL(Changed(QMap<QString,QVariant>,QStringList))) == 0)
-        QDBusAbstractInterface::connectNotify(signal);
+    QMetaMethod changedSignal = QMetaMethod::fromSignal(&SubscriberInterface::Changed);
+    if (*signal == changedSignal)
+        QDBusAbstractInterface::connectNotify(*signal);
     else
-        QObject::connectNotify(signal);
+        QObject::connectNotify(*signal);
 }
 
-void SubscriberInterface::disconnectNotify(const char *signal)
+void SubscriberInterface::disconnectNotify(const QMetaMethod *signal)
 {
     // only Changed signal should be AddMatch'd on the DBus side
-    if (qstrcmp(signal, SIGNAL(Changed(QMap<QString,QVariant>,QStringList))) == 0)
-        QDBusAbstractInterface::disconnectNotify(signal);
+    QMetaMethod changedSignal = QMetaMethod::fromSignal(&SubscriberInterface::Changed);
+    //    if (qstrcmp(signal, SIGNAL(Changed(QMap<QString,QVariant>,QStringList))) == 0) //DV
+    if (*signal == changedSignal)
+        QDBusAbstractInterface::disconnectNotify(*signal);
     else
-        QObject::disconnectNotify(signal);
+        QObject::disconnectNotify(*signal);
 }
 
 } // end namespace
